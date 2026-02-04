@@ -1,0 +1,90 @@
+# Deploy workflow for GitHub Pages
+# - Builds the Vite app and publishes the `dist` folder to the `gh-pages` branch
+# - If you want to provide environment variables securely, add them as repository secrets
+#   (recommended names shown below). The workflow will create a `.env` file from secrets
+#   if present. Alternatively you may commit a `.env` file to the repo (not recommended).
+#
+# Expected secrets (example names):
+# - VITE_FIREBASE_API_KEY
+# - VITE_FIREBASE_MESSAGING_SENDER_ID
+# - VITE_FIREBASE_APP_ID
+# - VITE_FIREBASE_MEASUREMENT_ID
+# - VITE_ADMIN_PASSKEY (client-exposed admin passkey if needed)
+# NOTE: For server-only secrets, prefer names without VITE_ prefix to avoid exposing them in the client bundle.
+#
+# NOTE: For security, store sensitive values in GitHub repository secrets (Settings → Secrets).
+
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: {}
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Use Node.js 18
+        uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+
+      - name: Cache node modules
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Create .env from VITE_* secrets (if provided)
+        if: |
+          github.event_name == 'workflow_dispatch' ||
+          github.event_name == 'push'
+        run: |
+          # Only create .env if it doesn't already exist in the repo
+          if [ -f .env ]; then
+            echo ".env already exists in repo, keeping it as-is.";
+          else
+            echo "Creating .env from provided secrets (if any).";
+            touched=false;
+            if [ -n "${{ secrets.VITE_FIREBASE_API_KEY }}" ]; then
+              echo "VITE_FIREBASE_API_KEY=${{ secrets.VITE_FIREBASE_API_KEY }}" >> .env; touched=true; fi
+            if [ -n "${{ secrets.VITE_FIREBASE_MESSAGING_SENDER_ID }}" ]; then
+              echo "VITE_FIREBASE_MESSAGING_SENDER_ID=${{ secrets.VITE_FIREBASE_MESSAGING_SENDER_ID }}" >> .env; touched=true; fi
+            if [ -n "${{ secrets.VITE_FIREBASE_APP_ID }}" ]; then
+              echo "VITE_FIREBASE_APP_ID=${{ secrets.VITE_FIREBASE_APP_ID }}" >> .env; touched=true; fi
+            if [ -n "${{ secrets.VITE_FIREBASE_MEASUREMENT_ID }}" ]; then
+              echo "VITE_FIREBASE_MEASUREMENT_ID=${{ secrets.VITE_FIREBASE_MEASUREMENT_ID }}" >> .env; touched=true; fi
+            # Optional admin/passkey secret (client-exposed only if VITE_ prefix is used)
+            if [ -n "${{ secrets.VITE_ADMIN_PASSKEY }}" ]; then
+              echo "VITE_ADMIN_PASSKEY=${{ secrets.VITE_ADMIN_PASSKEY }}" >> .env; touched=true; fi
+            if [ "$touched" = false ]; then
+              echo "No VITE_* or ADMIN_* secrets found; no .env created.";
+            else
+              echo ".env file created from secrets.";
+            fi
+          fi
+        shell: bash
+
+      - name: Build
+        env:
+          # Allow users to inject secrets via env if needed during build
+          NODE_ENV: production
+        run: npm run build
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
+          publish_branch: gh-pages
+
+# End of workflow
