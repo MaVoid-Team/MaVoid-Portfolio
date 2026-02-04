@@ -18,8 +18,9 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [main]
+    branches: [main, master]
   workflow_dispatch: {}
+  # Note: You can also trigger this workflow manually from the Actions tab → Deploy to GitHub Pages → Run workflow
 
 jobs:
   build-and-deploy:
