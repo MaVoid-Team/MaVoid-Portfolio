@@ -6,9 +6,8 @@ export function Footer() {
   const { t, dir } = useLanguage();
   
   const socialLinks = [
-    { icon: Github, href: 'https://github.com/mavoid', labelKey: 'github' },
+    { icon: Github, href: 'https://github.com/MaVoid-Team', labelKey: 'github' },
     { icon: Linkedin, href: 'https://linkedin.com/company/mavoid', labelKey: 'linkedin' },
-    { icon: Twitter, href: 'https://twitter.com/mavoid', labelKey: 'twitter' },
     { icon: Mail, href: 'mailto:contact@mavoid.com', labelKey: 'email' },
   ];
 
