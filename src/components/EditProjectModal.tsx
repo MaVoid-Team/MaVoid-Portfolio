@@ -270,7 +270,7 @@ export function EditProjectModal({ isOpen, onClose, projects, onEdit, onDelete }
                             animate={{ opacity: 1, y: 0 }}
                             className="group relative bg-slate-900/50 border border-slate-700 rounded-xl p-4 hover:border-purple-500/50 transition-all"
                           >
-                            <div className="flex items-center gap-4">
+                            <div className="flex flex-col md:flex-row items-center gap-4">
                               {/* Project Image */}
                               <div className="w-20 h-20 rounded-lg overflow-hidden bg-slate-800 flex-shrink-0">
                                 <img
@@ -281,7 +281,7 @@ export function EditProjectModal({ isOpen, onClose, projects, onEdit, onDelete }
                               </div>
 
                               {/* Project Info */}
-                              <div className="flex-1 min-w-0">
+                              <div className="flex-1 min-w-0 self-start" style={{alignSelf:"start"}}>
                                 <h3 className="text-white font-medium mb-1 truncate">
                                   {project.title}
                                 </h3>
@@ -296,12 +296,12 @@ export function EditProjectModal({ isOpen, onClose, projects, onEdit, onDelete }
                               </div>
 
                               {/* Actions */}
-                              <div className="flex items-center gap-2 flex-shrink-0">
+                              <div className="flex flex-row items-center gap-2 w-full md:w-auto flex-shrink-0">
                                 <motion.button
                                   whileHover={{ scale: 1.05 }}
                                   whileTap={{ scale: 0.95 }}
                                   onClick={() => handleProjectSelect(project)}
-                                  className="px-4 py-2 bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors text-sm font-medium"
+                                  className="px-4 py-2 w-full bg-purple-500 text-white rounded-lg hover:bg-purple-600 transition-colors text-sm font-medium"
                                 >
                                   {t('edit')}
                                 </motion.button>
@@ -326,7 +326,7 @@ export function EditProjectModal({ isOpen, onClose, projects, onEdit, onDelete }
                                     whileHover={{ scale: 1.05 }}
                                     whileTap={{ scale: 0.95 }}
                                     onClick={() => setDeleteConfirmId(project.id)}
-                                    className="p-2 text-red-400 hover:bg-red-500/20 rounded-lg transition-colors"
+                                    className="p-2 w-full flex-1 text-red-400 hover:bg-red-500/20 rounded-lg transition-colors"
                                   >
                                     <Trash2 className="w-5 h-5" />
                                   </motion.button>
@@ -529,7 +529,7 @@ function EditProjectForm({ project, onBack, onSave }: EditProjectFormProps) {
             {t('customColors')}
           </label>
           
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 w-full">
             <ColorInput
               label={t('primaryColor')}
               value={formData.primaryColor}

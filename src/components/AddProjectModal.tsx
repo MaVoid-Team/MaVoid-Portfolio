@@ -159,7 +159,7 @@ function ColorInput({
           type="text"
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          className="flex-1 px-2 py-2 bg-slate-900/50 border border-slate-700 rounded-lg text-white text-xs focus:outline-none focus:border-purple-500"
+          className="flex-1 px-2 py-2 w-full bg-slate-900/50 border border-slate-700 rounded-lg text-white text-xs focus:outline-none focus:border-purple-500"
           placeholder="#000000"
         />
       </div>
@@ -606,7 +606,7 @@ export function AddProjectModal({ isOpen, onClose, onAdd }: AddProjectModalProps
                     {t('customColors')}
                   </label>
                   
-                  <div className="grid grid-cols-3 gap-3">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 w-full">
                     <ColorInput
                       label={t('primaryColor')}
                       value={formData.primaryColor}
